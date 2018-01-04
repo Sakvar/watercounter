@@ -1,5 +1,6 @@
 /*
- *  
+ *  TODO: choose password depending on WiFi SSID
+ *  Prefered SSIDs and passwords are hardcoded (to be changed)
  */
 #include "ESP8266WiFi.h"
 
@@ -11,10 +12,6 @@ void setup() {
   WiFi.disconnect();
   delay(100);
 
-  Serial.println("Setup done");
-}
-
-void loop() {
   Serial.println("scan start");
 
   // WiFi.scanNetworks will return the number of networks found
@@ -38,14 +35,14 @@ void loop() {
           bestI = i;
         }
       // Print SSID and RSSI for each network found
-      Serial.print(i + 1);
-      Serial.print(": ");
-      Serial.print(WiFi.SSID(i));
-      Serial.print(" (");
-      Serial.print(WiFi.RSSI(i));
-      Serial.print(")");
-      Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");
-      delay(10);
+        Serial.print(i + 1);
+        Serial.print(": ");
+        Serial.print(WiFi.SSID(i));
+        Serial.print(" (");
+        Serial.print(WiFi.RSSI(i));
+        Serial.print(")");
+        Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");
+        delay(10);
       }
     }
     Serial.println("");
@@ -55,12 +52,39 @@ void loop() {
     Serial.print(WiFi.RSSI(bestI));
     Serial.print(")");
     Serial.println((WiFi.encryptionType(bestI) == ENC_TYPE_NONE)?" ":"*");
-    
+
+    WiFiConnect(WiFi.SSID(bestI), "19052015"); //mgts335, 19052015
   }
   Serial.println("");
 
   // Wait a bit before scanning again
   delay(5000);
+
+  
+
+
+
+  Serial.println("Setup done");
 }
 
+void loop() {
+
+}
+
+void WiFiConnect(String ssid, String password){
+  WiFi.mode(WIFI_STA);
+  //Serial.println(ssidstring);
+  //Serial.println(passwordstring);
+  WiFi.begin(ssid.c_str(), password.c_str());
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");  
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+}
 
